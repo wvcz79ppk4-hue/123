@@ -2,7 +2,7 @@ name: Build iPhone demo IPA
 on:
   workflow_dispatch:
   push:
-    paths: [iphone-install-kit.zip]
+    paths: [iphone-install-kit.zip, .github/workflows/build-ios.yml]
 permissions:
   contents: read
 jobs:
@@ -14,7 +14,9 @@ jobs:
       - name: Extract build kit
         run: unzip -q iphone-install-kit.zip -d kit
       - name: Build unsigned IPA
-        run: bash kit/build-ios.sh
+        run: |
+          sed -i '' 's/-framework Foundation/-framework Foundation -framework CoreGraphics/' kit/build-ios.sh
+          bash kit/build-ios.sh
       - uses: actions/upload-artifact@v4
         with:
           name: TaxDemo-unsigned-ipa
