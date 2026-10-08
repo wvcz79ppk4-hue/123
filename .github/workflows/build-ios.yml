@@ -1,0 +1,22 @@
+name: Build iPhone demo IPA
+on:
+  workflow_dispatch:
+  push:
+    paths: [iphone-install-kit.zip]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract build kit
+        run: unzip -q iphone-install-kit.zip -d kit
+      - name: Build unsigned IPA
+        run: bash kit/build-ios.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TaxDemo-unsigned-ipa
+          path: kit/dist/TaxDemo-unsigned.ipa
+          retention-days: 1
